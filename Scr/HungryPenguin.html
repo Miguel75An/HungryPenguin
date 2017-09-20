@@ -1,0 +1,163 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Hungry Penguin</title>
+<link rel="stylesheet" href="hungryPenguin.css">
+
+<section id="game">
+
+    <h1>Hungry Penguin</h1>
+    <div id = stage>
+        <div id = map></div>
+        <div id = octo></div>
+        <div id = crab></div>
+        <div id = penguin></div>
+    </div>
+
+    <p id = output>Stop the penguin. Save the fish village. Launch sharp crabs with the octopus.</p>
+    <input id=coordinateX type="text" placeholder="X" autofocus>
+    <input id=coordinateY type="text" placeholder="Y">
+    <button>Crab!</button>
+</section>
+
+<script>
+
+    //Game variables for HungryPenguin
+    var guessX;
+    var guessY;
+    var penguinX = Math.floor(Math.random()*280);
+    var penguinY = 20;
+    var crabsRemaining = 8;
+    var crabsShot = 0;
+    var gameState = "";
+    var gameWon = false;
+
+    //Game objects
+    var penguin = document.querySelector('#penguin');
+    var octo = document.querySelector('#octo');
+    var crab = document.querySelector('#crab');
+
+    //Inputs and outputs
+    var coorX = document.querySelector('#coordinateX');
+    var coorY = document.querySelector('#coordinateY');
+    var output = document.querySelector('#output');
+
+    //Button
+    var button = document.querySelector("button");
+    button.style.cursor = "pointer";
+    button.addEventListener("click", clickHandler, false);
+
+    //Enter key
+    window.addEventListener("keydown", keydownHandler, false);
+
+    //This will be called when we press the button.
+    function clickHandler()
+    {
+        validateInput();
+    }
+    //Use to handle the Enter key when pressed.
+    function keydownHandler(event)
+    {
+        if(event.keyCode === 13)
+        {
+            validateInput();
+        }
+    }
+    //Validates the input so that a # is provided.
+    function validateInput()
+    {
+        guessX = parseInt(coorX.value);
+        guessY = parseInt(coorY.value);
+        if(isNaN(guessX) || isNaN(guessY))
+        {
+            output.innerHTML = "Please insert numbers.";
+        }
+        else if(guessX > 300 || guessY > 300)
+        {
+            output.innerHTML = "Please enter a number less than 300."
+        }
+        else
+        {
+            playGame()
+        }
+    }
+    //Renders the game objects every turn.
+    function render()
+    {
+        //Penguin position
+        penguin.style.left = penguinX + 'px';
+        penguin.style.top = penguinY + 'px';
+        //Octo position
+        octo.style.left = guessX + 'px';
+        //Crab position
+        crab.style.left = guessX + 'px';
+        crab.style.top = guessY + 'px';
+
+        if(gameWon)
+        {
+            //Hide scared penguin
+            penguin.style.display = 'none';
+        }
+    }
+
+    function playGame()
+    {
+        crabsShot += 1;
+        crabsRemaining -= 1;
+        gameState = "Crabs Shot: " + crabsShot + " Crabs Remaining: " + crabsRemaining;
+
+        if(guessX >= penguinX - 19 && guessX <= penguinX + 19)
+        {
+            if(guessY >= penguinY - 19 && guessY <= penguinY + 19)
+            {
+                gameWon = true;
+                endGame();
+            }
+        }
+        else
+        {
+            output.innerHTML = "Failed! " + gameState;
+            if(crabsRemaining < 1)
+            {
+                endGame();
+            }
+        }
+
+        if(!gameWon)
+        {
+            //Update new coordinates for penguin.
+            penguinX = Math.floor(Math.random()*280);
+            penguinY += 30; //Go down
+        }
+
+        render();
+        console.log(penguinX);
+        console.log(penguinY);
+    }
+    //Handles what should occur when game ends
+    function endGame()
+    {
+        if(gameWon)
+        {
+            output.innerHTML = "Congratulations! You saved the fish village. " + gameState
+        }
+        else
+        {
+            output.innerHTML = "Lost. Penguin will make sushi."
+        }
+        //Disable the button
+        button.removeEventListener("click", clickHandler, false);
+        button.disabled = true;
+
+        //Disable the enter key
+        window.removeEventListener("keydown", keydownHandler, false);
+
+        //Disable the input fields
+        coorX.disabled = true;
+        coorY.disabled = true;
+    }
+
+
+
+
+
+</script>
