@@ -74,7 +74,7 @@ button:hover
 button:active
 {
     background-color: darkgray;
-    color: #000;
+    color: #0000;
 }
 
 #game
